@@ -18,7 +18,7 @@ All analyses are descriptive and exploratory, aiming to highlight potential disp
 
 This project utilizes data from the **Medical Expenditure Panel Survey (MEPS) 2019 Full Year Consolidated Data File (HC-216)**. This dataset provides comprehensive information on a nationally representative sample of the U.S. civilian noninstitutionalized population for the calendar year 2019.
 
-🔗 [MEPS HC-216 Data File](https://meps.ahrq.gov/data_stats/download_data_files_detail.jsp?cboPufNumber=HC-216)
+* [MEPS HC-216 Data File](https://meps.ahrq.gov/data_stats/download_data_files_detail.jsp?cboPufNumber=HC-216)
 
 The HC-216 file includes a wide range of variables, such as:
 
@@ -52,7 +52,18 @@ data/h216.dta
 - `data/` — input datasets (not tracked in git)
 - `docs/` — documentation and exported results
 - `modules/` — utility functions for data processing and visualization
-- `*.ipynb` — notebooks with analysis
+- [`MEPS Cancer analysis 2019.ipynb`](MEPS Cancer analysis 2019.ipynb) — main notebook for exploratory analysis of MEPS 2019 data with a focus on cancer.  
+  It includes:
+  - an overview of cancer types represented in the dataset,
+  - comparisons between individuals with and without cancer,
+  - analyses of:
+    - **Sociodemographic characteristics** (e.g., age, sex, income, race/ethnicity, education, marital status, employment status, household size),
+    - **Quality of life** (e.g., self-rated health, limitations in daily living),
+    - **Mental health** (e.g., psychological distress, depression scales),
+    - **Healthcare burden** (e.g., medical expenditures, number of medical visits, missed work),
+    - **Access to care** (e.g., insurance status, delays or difficulties in obtaining care),
+  - summary tables and visualizations highlighting patterns and disparities.
+
 
 ---
 
