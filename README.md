@@ -52,7 +52,7 @@ data/h216.dta
 - `data/` — input datasets (not tracked in git)
 - `docs/` — documentation and exported results
 - `modules/` — utility functions for data processing and visualization
-- [`MEPS Cancer analysis 2019.ipynb`](MEPS Cancer analysis 2019.ipynb) — main notebook for exploratory analysis of MEPS 2019 data with a focus on cancer.  
+- [`MEPS Cancer analysis 2019.ipynb`](MEPS%20Cancer%20analysis%202019.ipynb) — main notebook for exploratory analysis of MEPS 2019 data with a focus on cancer.  
   It includes:
   - an overview of cancer types represented in the dataset,
   - comparisons between individuals with and without cancer,
