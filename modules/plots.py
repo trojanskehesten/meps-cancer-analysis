@@ -6,6 +6,9 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 from scipy.stats import mannwhitneyu
 from matplotlib.patches import Rectangle
+import plotly.express as px
+import plotly.io as pio
+pio.renderers.default = "notebook"  # or "iframe", "svg", ""notebook_connected
 
 
 def pairwise_mw(df, features, key_value, cont_feat):
@@ -75,3 +78,27 @@ def add_legend_mw_pairwise_age(ax):
 def customize_mw_pairwise_age(ax):
     add_titles_mw_pairwise_age(ax)
     add_legend_mw_pairwise_age(ax)
+
+
+def pie(df, feat, title=None, colors=None, order=None):
+    """Plot a pie chart for a categorical column with counts and percentages."""
+    if title is None:
+        title = feat
+
+    category_orders = {feat: order} if order is not None else None
+
+    fig = px.pie(
+        df,
+        names=feat,
+        color=feat,
+        title=title,
+        color_discrete_map=colors,
+        category_orders=category_orders,
+    )
+
+    fig.update_traces(
+        textinfo='label+percent+value',
+        texttemplate='%{label}<br>%{percent:.1%}<br>(%{value})',
+        hovertemplate='%{label}: <b>%{value}</b> (%{percent:.1%})'
+    )
+    fig.show()
