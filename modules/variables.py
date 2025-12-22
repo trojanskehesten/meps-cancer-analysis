@@ -24,10 +24,10 @@ race_col = 'RACEV1X'
 cancer_colors = {no_ans: "lightgreen", yes_ans: "lightcoral"}
 cancer_type_colors = {
     # No cancer
-    no_ans: "#B0BEC5",  # cold-gray
+    no_ans: "#E0E6EA",  # light-gray
 
     # Multiple cancers
-    mult_ans: "#757575",  # dark-gray
+    mult_ans: "#616161",  # dark-gray
 
     # Reproductive cancers
     "1. Breast": "#C97BA7",  # purple
@@ -51,10 +51,11 @@ cancer_type_colors = {
     "1. Lymphoma": "#7E57C2",  # violet
 
     # Other
-    "1. Other": "#9E9E9E"  # medium gray
+    "1. Other": "#9E9E9E",  # medium-gray
+    "1. DK / Refused": "#9E9E9E",
 }
 
-cancer_type_order = ['2. No', '0. Multiple', '1. Other', '1. Breast', '1. Cervical', '1. Uterine', '1. Prostate',
- '1. Bladder', '1. Colon', '1. Lung', '1. Skin Melanoma', '1. Skin-non Melanoma',
- '1. Skin-unknown Type', '1. Lymphoma']
+cancer_type_order = ['2. No', '0. Multiple', '1. DK / Refused', '1. Other', '1. Breast', '1. Cervical', '1. Uterine', '1. Prostate',
+ '1. Bladder', '1. Colon', '1. Lung', '1. Skin\nMelanoma', '1. Skin\nNon-melanoma',
+ '1. Skin\nUnknown type', '1. Lymphoma']
 
