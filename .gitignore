@@ -3,3 +3,5 @@
 .idea
 data/
 docs/
+iframe_figures
+**/__pycache__/
