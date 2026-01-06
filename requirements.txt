@@ -6,3 +6,4 @@ matplotlib~=3.10.1
 scipy~=1.15.2
 plotly~=6.5.0
 pingouin~=0.5.5
+streamlit~=1.52.2
