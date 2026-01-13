@@ -59,3 +59,4 @@ cancer_type_order = ['2. No', '0. Multiple', '1. DK / Refused', '1. Other', '1. 
  '1. Bladder', '1. Colon', '1. Lung', '1. Skin\nMelanoma', '1. Skin\nNon-melanoma',
  '1. Skin\nUnknown type', '1. Lymphoma']
 
+no_filter = 'NO FILTER'
