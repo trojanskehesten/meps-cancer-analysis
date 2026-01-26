@@ -1,12 +1,11 @@
+# To run it from root directory: `streamlit run app/dashboard.py`
+
 import streamlit as st
 import sys
 import os
-import pandas as pd
 import numpy as np
-import plotly.express as px
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 
+import utils as u
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, "modules")))
 
@@ -17,99 +16,39 @@ st.set_page_config(layout="wide")
 st.title('MEPS Cancer Analysis Dashboard')
 st.markdown('')
 
-# To run it: `streamlit run app/dashboard.py`
-# @st.cache(persist=True)
-@st.cache_data
-def load_data():
-    # Load data:
-    df = pd.read_stata(os.path.join(os.path.dirname(__file__), os.pardir, "data", "h216.dta"))
+# 0. Load data and initial values
+df = u.load_data()
 
-    # Change categorical columns to object type:
-    df_cat = df.select_dtypes('category')
-    df[df_cat.columns] = df_cat.astype('object')
+dem_choices = ["Age", "Sex", "Race"]
+dem_feats = [v.age_col, v.sex_col, v.race_col]
+dem_feats_types = ['cont', 'cat', 'cat']
 
-    # Drop inapplicable answers:
-    df = df.loc[~df[v.cancer_feat].isin(v.vals_to_drop), :]
-
-    # Replace answers:
-    df[v.cancer_feat] = df[v.cancer_feat].replace({'1 YES': v.yes_ans, '2 NO': v.no_ans})
-
-    # Number of cancer types per patient:
-    df[v.cancer_bool_types] = df.loc[:, v.cancer_types] == '1 YES'
-    df[v.cancer_mult] = df.loc[:, v.cancer_bool_types].sum(axis=1)
-    df[v.mult_col] = df[v.cancer_mult] > 1
-    df[v.mult_col] = df[v.mult_col].replace({False: v.no_ans, True: v.yes_ans})
-    df[v.cancer_feat_type] = df.loc[:, v.cancer_feat]
-
-    cancer_type_names = np.append(v.cancer_type_names, v.mult_col)
-    for bool_type, type_name in zip(v.cancer_bool_types, cancer_type_names):
-        df.loc[df[bool_type], v.cancer_feat_type] = f'1. {type_name}'
-
-    df.loc[df.loc[:, v.cancer_mult] > 1, v.cancer_feat_type] = v.mult_ans
-
-    df[v.cancer_feat_type] = df[v.cancer_feat_type].replace({'2 NO': v.no_ans})
-
-    # Add DK or Refused category:
-    df[v.cancer_feat_type] = df[v.cancer_feat_type].replace({v.yes_ans: v.dk_refused_ans})
-
-    # Replace invalid or missing values in cancer_type columns with None for proper data handling:
-    df[v.cancer_types] = df[v.cancer_types].replace({'-8 DK': None, '-7 REFUSED': None})
-
-    # Inapplicable when CANCERDX is No
-    df[v.cancer_types] = df[v.cancer_types].replace({'2 NO': v.no_ans, '-1 INAPPLICABLE': v.no_ans})
-    df[v.cancer_types] = df[v.cancer_types].replace({'1 YES': v.yes_ans})
-
-    # Rename the columns to readable names:
-    df[cancer_type_names[:-1]] = df[v.cancer_types]  # -1 - to exclude Multiple
-    df = df.drop(columns=v.cancer_types)
-
-    # Race values correction:
-    df[v.race_col] = df[v.race_col].str.replace(r' - NO OTHER RACE REPORTED$', '', regex=True)
-    df[v.race_col] = df[v.race_col].str.replace(r'-NO OTH$', '', regex=True)
-    df[v.race_col] = df[v.race_col].str.replace(r'-NO OTHER RACE$', '', regex=True)
-    df[v.race_col] = df[v.race_col].replace(
-        {
-            "3 AMER INDIAN/ALASKA NATIVE": "3 INDIAN/\nALASKA",
-            "4 ASIAN/NATV HAWAIIAN/PACFC ISL": "4 ASIAN/\nHAWAIIAN",
-            "6 MULTIPLE RACES REPORTED": "6 MULTIPLE",
-        }
-    )
-
-    return df
-
-df = load_data()
-
-choice = st.radio(
+st.subheader("Demographic feature distribution")
+dem_choice = st.radio(
     "Demographic feature",
-    ["Age", "Sex", "Race"],
+    dem_choices,
     index=0,
     horizontal=True,
     label_visibility="collapsed",
 )
 height = 400
-dem_feat = {"Age": v.age_col, "Sex": v.sex_col, "Race": v.race_col}[choice]
-# 1. Distributions of demographic features
+dem_feat = dict(zip(dem_choices, dem_feats))[dem_choice]  # {"Age": v.age_col, "Sex": v.sex_col, "Race": v.race_col}
+other_mask = np.array(dem_feats)!=dem_feat
+other_dem_feats = np.array(dem_feats)[other_mask]
+other_dem_feats_types = np.array(dem_feats_types)[other_mask]
 
-if choice == 'Age':
-    fig_dist = px.histogram(df, x=v.age_col, title='Age')
-    fig_dist.update_traces(textfont_size=20, textposition="inside",
-                          texttemplate="%{y:.0f}")
-    fig_dist.update_traces(
-        xbins=dict(
-            start=df[v.age_col].min(),
-            end=df[v.age_col].max() + 1,
-            size=2,
-        )
-    )
-    fig_dist.update_layout(height=height)
-    st.plotly_chart(fig_dist, use_container_width=True)
+# 1. Distributions of demographic features
+# 1.1. Age:
+if dem_choice == 'Age':
+    u.plot_hist_age(df, height=height)
+
 # 1.2-3. Sex and Race
 else:
-    fig_dist = plots.pie(df, dem_feat, return_fig=True, title=choice)
-    fig_dist.update_layout(height=height, showlegend=False)  #, width=300, autosize=False)
-    st.plotly_chart(fig_dist, use_container_width=True)
+    u.plot_pie(df=df, x=dem_feat, title=dem_choice, height=height)
 
 # 2. Cancer dependency
+st.subheader("Cancer dependency")
+# 2.1. Radio buttons area:
 col1, col2 = st.columns(2)
 cancer_options = ["Cancer diagnosis", "Cancer types"]
 with col1:
@@ -135,11 +74,14 @@ if cancer_choice == cancer_options[1]:
 
 cancer_feat = {"Cancer diagnosis": v.cancer_feat, "Cancer types": v.cancer_feat_type}[cancer_choice]
 
+# 2.1.1 Exclude No Cancer cases:
 if exclude_no:
     df_sub = df[df[v.cancer_feat_type] != v.no_ans]
 else:
     df_sub = df
-if choice == 'Age':
+
+# 2.2. Plot area:
+if dem_choice == 'Age':
     if cancer_choice == cancer_options[0]:
         category_orders = np.sort(list(v.cancer_colors.keys()))
         color_discrete_map = v.cancer_colors
@@ -147,106 +89,85 @@ if choice == 'Age':
         category_orders = v.cancer_type_order
         color_discrete_map = v.cancer_type_colors
 
-    fig = px.box(
-        df_sub,
-        x=dem_feat,
-        y=cancer_feat,
-        orientation="h",
-        color=cancer_feat,
-        category_orders={cancer_feat: category_orders},
-        color_discrete_map=color_discrete_map,
-        points=False,
-    )
-
-    fig.update_layout(showlegend=False)
+    fig = u.boxplot(df_sub, cancer_feat, dem_feat, category_orders, color_discrete_map)
 
 else:
-    feat1, feat2 = cancer_feat, dem_feat
-
-    ct_abs = pd.crosstab(df_sub[feat1], df_sub[feat2])
-    counts = ct_abs.to_numpy()[..., None]
-    ct_h = pd.crosstab(df_sub[feat1], df_sub[feat2], normalize="index")
-    ct_v = pd.crosstab(df_sub[feat1], df_sub[feat2], normalize="columns")
-
-    fig = make_subplots(
-        rows=1, cols=2,
-        subplot_titles=("Row-normalized (horizontal)", "Column-normalized (vertical)"),
-        horizontal_spacing=0.08
-    )
-
-    z_text_h = (ct_h.values * 100)
-    z_text_v = (ct_v.values * 100)
-
-    fig.add_trace(
-        go.Heatmap(
-            z=ct_h.values,
-            x=ct_h.columns.astype(str),
-            y=ct_h.index.astype(str),
-            text=np.round(z_text_h, 1).astype(str) + "%",
-            texttemplate="%{text}",
-            customdata=counts,
-            hovertemplate="%{y} / %{x}<br>%{customdata[0]} patients (%{z:.2%})<extra></extra>",
-            # hovertemplate="feat1=%{y}<br>feat2=%{x}<br>percent=%{z:.2%}<br>count=%{customdata}<extra></extra>",
-            zmin=0, zmax=1,
-            colorbar=dict(title="Share (row)")
-        ),
-        row=1, col=1
-    )
-
-    fig.add_trace(
-        go.Heatmap(
-            z=ct_v.values,
-            x=ct_v.columns.astype(str),
-            y=ct_v.index.astype(str),
-            text=np.round(z_text_v, 1).astype(str) + "%",
-            texttemplate="%{text}",
-            customdata=counts,
-            hovertemplate="%{y} / %{x}<br>%{customdata[0]} patients (%{z:.2%})<extra></extra>",
-            zmin=0, zmax=1,
-            colorbar=dict(title="Share (col)")
-        ),
-        row=1, col=2
-    )
-
-    fig.update_yaxes(visible=False, row=1, col=2, autorange="reversed")
-    # fig.update_yaxes(showticklabels=False, row=1, col=2)
+    fig = u.crosstab_plot(df_sub, cancer_feat, dem_feat)
 
 st.plotly_chart(fig, use_container_width=True)
 
+# 2.3. Conclusion:
+if cancer_feat == v.cancer_feat:
+    conclusion2 = v.concl_diag[dem_choice]
+else:
+    conclusion2 = v.consl_types[dem_choice]
+u.expander_conclusion(conclusion=conclusion2)
+
 # 3. Filters
+st.subheader("Other demographic features dependency")
+# 3.0. If choice is Age, let's create categories (18-39, 40-64, 65-85):
+if dem_feat == v.age_col:
+    dem_feat = v.age_col_cat
+
+# 3.1. Create filters:
 col1, col2 = st.columns(2)
 cancer_types = df[v.cancer_feat_type].unique()
-cancer_types = np.concatenate((cancer_types, ['1. ANY', v.no_filter]))
+# cancer_types = np.concatenate((cancer_types, ['1. ANY', v.no_filter]))  # Multiple choice - not needed
 dem_types = df[dem_feat].unique()
-dem_types = np.append(dem_types, v.no_filter)
+# dem_types = np.append(dem_types, v.no_filter)
 
+# 3.2. Selection area:
 with col1:
-    cancer_option = st.selectbox(
-        "Cancer type",
+    cancer_options = st.multiselect(
+        "Cancer type(s)",
         cancer_types,
-        index=0,  # какая выбрана по умолчанию
     )
+
 with col2:
-    dem_option = st.selectbox(
-        choice,
+    dem_options = st.multiselect(
+        dem_choice,
         dem_types,
-        index=0,  # какая выбрана по умолчанию
     )
 
-if cancer_option == v.no_filter:
-    cols = st.columns(3)
-    # Distribution of cancer:
+# 3.3. Get subset with chosen filters:
+df_sub = df.copy()
+if len(cancer_options) != 0:
+    df_sub = df_sub[df_sub[v.cancer_feat_type].isin(cancer_options)]
+if len(dem_options) != 0:
+    df_sub = df_sub[df_sub[dem_feat].isin(dem_options)]
 
-    with (cols[0]):
-        yes_no_counts = df[v.cancer_feat].value_counts()
-        yes_no_prop =  df[v.cancer_feat].value_counts(normalize=True)
-        yes_no_prop = (yes_no_prop * 100).round(1)
-        title = 'Cancer types<br>'
-        title += f'No: {yes_no_counts.loc[v.no_ans]} ({yes_no_prop.loc[v.no_ans]} %) /<br>'
-        title += f'Yes: {yes_no_counts.loc[v.yes_ans]} ({yes_no_prop.loc[v.yes_ans]} %)'
-        fig_cancer = plots.pie(df[df[v.cancer_feat_type] != v.no_ans], v.cancer_feat_type, title, v.cancer_type_colors,
-                  v.cancer_type_order, return_fig=True)
-        fig_cancer.update_layout(height=height, showlegend=False)
-        st.plotly_chart(fig_cancer, use_container_width=True)
+# 3.4. Plots area:
+st.write(f'Number of persons: {len(df_sub)}')
+
+if len(df_sub) == 0:
+    st.write('No data')
 else:
-    cols = st.columns(2)
+    # Create structure with plots:
+    # Create cancer plot if cancer option was not chosen:
+    if len(cancer_options) == 0:
+        cols = st.columns(3)
+        col_i_start = 1
+        # Distribution of cancer:
+
+        with (cols[0]):
+            yes_no_counts = df_sub[v.cancer_feat].value_counts()
+            yes_no_prop =  df_sub[v.cancer_feat].value_counts(normalize=True)
+            yes_no_prop = (yes_no_prop * 100).round(1)
+            title = 'Cancer types<br>'
+            title += f'No: {yes_no_counts.loc[v.no_ans]} ({yes_no_prop.loc[v.no_ans]} %) /<br>'
+            title += f'Yes: {yes_no_counts.loc[v.yes_ans]} ({yes_no_prop.loc[v.yes_ans]} %)'
+            fig_cancer = plots.pie(df_sub[df_sub[v.cancer_feat_type] != v.no_ans], v.cancer_feat_type, title, v.cancer_type_colors,
+                      v.cancer_type_order, return_fig=True)
+            fig_cancer.update_layout(height=height, showlegend=False)
+            st.plotly_chart(fig_cancer, use_container_width=True)
+    else:
+        cols = st.columns(2)
+        col_i_start = 0
+
+    # Plot other non_chosen two demographic features distributions:
+    for i in range(2):
+        with (cols[i+col_i_start]):
+            if other_dem_feats_types[i]=='cont':
+                u.plot_hist_age(df=df_sub, x=v.age_col, title='Age', height=height)
+            elif other_dem_feats_types[i]=='cat':
+                u.plot_pie(df=df_sub, x=other_dem_feats[i], title=None)
