@@ -98,7 +98,7 @@ def customize_mw_pairwise_age(ax):
     _add_legend_mw_pairwise_age(ax)
 
 
-def pie(df, feat, title=None, colors=None, order=None):
+def pie(df, feat, title=None, colors=None, order=None, return_fig=False):
     """Plot a pie chart for a categorical column with counts and percentages."""
     if title is None:
         title = feat
@@ -120,6 +120,9 @@ def pie(df, feat, title=None, colors=None, order=None):
         hovertemplate='%{label}: <b>%{value}</b> (%{percent:.1%})'
     )
     fig.show()
+
+    if return_fig is True:
+        return fig
 
 
 def plot_posthoc_heatmap(df, dv, between, alpha=0.05, multiple_comparison=True, figsize=(10, 8), **kwargs):
