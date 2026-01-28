@@ -27,28 +27,48 @@ The HC-216 file includes a wide range of variables, such as:
 - **Employment and Disability Days**: employment status, number of workdays missed due to illness or injury.
 - **Priority Conditions**: indicators for various health conditions, including cancer.
 
-In this project, the analysis is restricted to demographic variables and cancer-related indicators, providing a focused overview of cancer prevalence and demographic heterogeneity in the 2019 MEPS sample.
+In this project, the analysis is restricted to demographic variables and cancer-related indicators, providing a focused overview of cancer prevalence and demographic heterogeneity in the 2019 MEPS sample. 
+That is why a minimal subset of the original MEPS file is used.
+
+The subset keeps only the variables required for the cancer-focused analysis:
+
+- **Cancer-related variables**:  
+  `CABLADDR`, `CABREAST`, `CACERVIX`, `CACOLON`, `CALUNG`, `CALYMPH`, `CAMELANO`,  
+  `CAOTHER`, `CAPROSTA`, `CASKINNM`, `CASKINDK`, `CAUTERUS`, `CANCERDX`
+
+- **Demographic variables**:  
+  `AGELAST`, `SEX`, `RACEV1X`
+
+All other columns from the original `h216.dta` (≈75 MB) are omitted, resulting in a compact file (~0.5 MB) containing only the variables used in this project.
 
 ---
 
 ## Data File
 
-To run the analysis, download the following data file and place it in the `data/` folder:
-- `h216.dta` - [Download from MEPS](https://meps.ahrq.gov/data_stats/download_data_files_detail.jsp?cboPufNumber=HC-216)
+The repository expects a Stata file named:
 
-On the download page, scroll to the **"Data"** section and select the file in **Data File, Stata format (.dta)**.
-
-The notebook expects this file to be located at:  
-```
+```text
 data/h216.dta
 ```
 
+In this project, `data/h216.dta` is already a **reduced subset** of the original MEPS HC‑216 file, containing only the cancer-related and demographic columns listed above.
+
+If you want to recreate the subset yourself, you can download the full file from MEPS:
+
+- `h216.dta` – [Download from MEPS](https://meps.ahrq.gov/data_stats/download_data_files_detail.jsp?cboPufNumber=HC-216)
+
+Then extract only the required columns before use.
+
 ---
 
-## Structure
+## Project Structure
 
-- `data/` - input datasets (not tracked in git)
-- `docs/` - documentation and exported results
+- `app/`  
+  - `dashboard.py` – main Streamlit app (layout, controls, and dashboard logic)  
+  - `utils.py` – helper functions for data loading and plotting
+- `data/`  - input datasets
+  - `h216.dta` – reduced MEPS dataset (subset with cancer and demographic variables only)
+- `docs/` - documentation and exported results *(not tracked in git)*
 - `modules/` - utility functions for data processing and visualization
 - [`MEPS Cancer analysis 2019.ipynb`](MEPS%20Cancer%20analysis%202019.ipynb) - main notebook for exploratory analysis of MEPS 2019 data with a demographic focus.  
   It includes:
@@ -60,6 +80,25 @@ data/h216.dta
     - **Race**
   - summary tables and visualizations highlighting demographic patterns and disparities.
 
+---
+
+## Dashboard
+
+An interactive dashboard is provided to explore cancer-related patterns by age, sex, and race.
+
+The dashboard:
+
+- visualizes distributions of key demographic variables,
+- shows how cancer diagnosis and cancer types depend on demographics,
+- allows filtering by cancer type and demographic groups.
+
+To run the dashboard from the **project root**:
+
+```bash
+streamlit run app/dashboard.py
+```
+
+- Make sure that python dependencies are installed (see below).
 
 ---
 
@@ -67,7 +106,11 @@ data/h216.dta
 
 - Python 3.12
 
-See [`requirements.txt`](requirements.txt) for details.
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
 
 ---
 
