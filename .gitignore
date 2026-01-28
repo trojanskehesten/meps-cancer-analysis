@@ -1,7 +1,7 @@
 .ipynb_checkpoints
 .venv
 .idea
-data/
+data/h216_original.dta
 docs/
 iframe_figures
 **/__pycache__/
