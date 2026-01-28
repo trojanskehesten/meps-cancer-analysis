@@ -209,9 +209,12 @@ def crosstab_plot(df, feat1, feat2):
         plotly.graph_objects.Figure: Figure with two heatmap subplots.
     """
     ct_abs = pd.crosstab(df[feat1], df[feat2])
+    ct_abs = ct_abs.sort_index().sort_index(axis=1)
     counts = ct_abs.to_numpy()[..., None]
     ct_h = pd.crosstab(df[feat1], df[feat2], normalize="index")
+    ct_h = ct_h.sort_index().sort_index(axis=1)
     ct_v = pd.crosstab(df[feat1], df[feat2], normalize="columns")
+    ct_v = ct_v.sort_index().sort_index(axis=1)
 
     fig = make_subplots(
         rows=1, cols=2,
@@ -251,7 +254,7 @@ def crosstab_plot(df, feat1, feat2):
         ),
         row=1, col=2
     )
-
+    fig.update_yaxes(autorange="reversed", row=1, col=1)
     fig.update_yaxes(visible=False, row=1, col=2, autorange="reversed")
 
     return fig

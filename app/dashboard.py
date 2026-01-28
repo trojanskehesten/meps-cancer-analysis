@@ -130,7 +130,9 @@ def block3(dem_feat):
     # 3.1. Create filters:
     col1, col2 = st.columns(2)
     cancer_types = df[v.cancer_feat_type].unique()
+    cancer_types = np.sort(cancer_types)
     dem_types = df[dem_feat].unique()
+    dem_types = np.sort(dem_types)
 
     # 3.2. Selection area:
     with col1:
