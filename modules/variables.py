@@ -5,8 +5,6 @@ cancer_bool_types = [f'{col}_bool' for col in cancer_types]
 non_sex_dependent_cancer_types = ['CABLADDR', 'CACOLON', 'CALUNG', 'CALYMPH', 'CAMELANO', 'CAOTHER', 'CASKINNM', 'CASKINDK']
 cancer_feat_type = 'CANCERDX_type'
 
-# cancer_type_names = ['BLADDER', 'BREAST', 'CERVICAL', 'COLON', 'LUNG', 'LYMPHOMA', 'SKIN MELANOMA', 'OTHER', 'PROSTATE', 'SKIN-NONMELANO', 'SKIN-UNKNOWN TYPE', 'UTERINE']
-# cancer_type_names = ['BLADDER', 'BREAST', 'CERVICAL', 'COLON', 'LUNG', 'LYMPHOMA', 'SKIN', 'OTHER', 'PROSTATE', 'SKIN', 'SKIN', 'UTERINE']
 cancer_type_names = ['Bladder', 'Breast', 'Cervical', 'Colon', 'Lung', 'Lymphoma', 'Skin\nMelanoma', 'Other', 'Prostate', 'Skin\nNon-melanoma', 'Skin\nUnknown type', 'Uterine']
 non_sex_dependent_cancer_type_names = ['Bladder', 'Colon', 'Lung', 'Lymphoma', 'Skin\nMelanoma', 'Other', 'Skin\nNon-melanoma', 'Skin\nUnknown type']
 mult_col = 'Multiple'
@@ -17,10 +15,23 @@ mult_ans = '0. Multiple'
 dk_refused_ans = '1. DK / Refused'
 vals_to_drop = ['-1 INAPPLICABLE', '-15 CANNOT BE COMPUTED', '-8 DK', '-7 REFUSED']
 
+no_raw_ans = '2 NO'
+yes_raw_ans = '1 YES'
+
 age_col = 'AGELAST'
 age_col_cat = age_col + "_CAT"
 sex_col = 'SEX'
 race_col = 'RACEV1X'
+
+dash_age_feat = 'Age'
+dash_sex_feat = 'Sex'
+dash_race_feat = 'Race'
+dash_dem_feats_types = ['cont', 'cat', 'cat']
+
+age_bins = [17, 39, 64, 86]
+age_groups = ["1. Young adults (18-39)", "2. Middle-aged (40-64)", "3. Older adults (65-85)"]
+
+dash_plot_height = 400
 
 cancer_colors = {no_ans: "lightgreen", yes_ans: "lightcoral"}
 cancer_type_colors = {
@@ -107,3 +118,4 @@ consl_types = {
 
 * **Post-hoc analysis** (13 contrasts, α = 0.00066) reveals the association is **primarily driven by skin cancers** (melanoma, non-melanoma, unknown), where **White** patients show substantially higher rates compared to Black, Asian/Hawaiian, and Multiple-race patients. **Prostate** cancer shows higher rates in **Black** patients vs lower rates in Asian/Hawaiian and Multiple-race patients, while multiple cancers show higher rates in White patients vs lower rates in Black and Asian/Hawaiian patients. **Other cancer types show non-significant racial differences** at this threshold.""",
 }
+# 3. Filters
