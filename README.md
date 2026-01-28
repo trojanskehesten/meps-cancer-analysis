@@ -1,5 +1,7 @@
 # MEPS Cancer Analysis (2019)
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://meps-cancer-analysis.streamlit.app/)
+
 This project explores differences between individuals **with and without cancer**, as well as **across different types of cancer**, using data from the Medical Expenditure Panel Survey (MEPS).
 
 The analysis focuses on demographic differences associated with cancer status and cancer type, with particular attention to key population characteristics that are central to cancer epidemiology and health disparities research:
@@ -39,7 +41,7 @@ The subset keeps only the variables required for the cancer-focused analysis:
 - **Demographic variables**:  
   `AGELAST`, `SEX`, `RACEV1X`
 
-All other columns from the original `h216.dta` (≈75 MB) are omitted, resulting in a compact file (~0.5 MB) containing only the variables used in this project.
+All other columns from the original `h216.dta` (≈75 MB) are omitted, resulting in a compact file (≈0.5 MB) containing only the variables used in this project.
 
 ---
 
@@ -55,7 +57,7 @@ In this project, `data/h216.dta` is already a **reduced subset** of the original
 
 If you want to recreate the subset yourself, you can download the full file from MEPS:
 
-- `h216.dta` – [Download from MEPS](https://meps.ahrq.gov/data_stats/download_data_files_detail.jsp?cboPufNumber=HC-216)
+- `h216.dta` - [Download from MEPS](https://meps.ahrq.gov/data_stats/download_data_files_detail.jsp?cboPufNumber=HC-216)
 
 Then extract only the required columns before use.
 
@@ -64,10 +66,10 @@ Then extract only the required columns before use.
 ## Project Structure
 
 - `app/`  
-  - `dashboard.py` – main Streamlit app (layout, controls, and dashboard logic)  
-  - `utils.py` – helper functions for data loading and plotting
+  - `dashboard.py` - main Streamlit app (layout, controls, and dashboard logic)  
+  - `utils.py` - helper functions for data loading and plotting
 - `data/`  - input datasets
-  - `h216.dta` – reduced MEPS dataset (subset with cancer and demographic variables only)
+  - `h216.dta` - reduced MEPS dataset (subset with cancer and demographic variables only)
 - `docs/` - documentation and exported results *(not tracked in git)*
 - `modules/` - utility functions for data processing and visualization
 - [`MEPS Cancer analysis 2019.ipynb`](MEPS%20Cancer%20analysis%202019.ipynb) - main notebook for exploratory analysis of MEPS 2019 data with a demographic focus.  
@@ -83,6 +85,8 @@ Then extract only the required columns before use.
 ---
 
 ## Dashboard
+
+**Live Demo**: [https://meps-cancer-analysis.streamlit.app/](https://meps-cancer-analysis.streamlit.app/)
 
 An interactive dashboard is provided to explore cancer-related patterns by age, sex, and race.
 
