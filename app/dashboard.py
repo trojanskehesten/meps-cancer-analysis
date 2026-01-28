@@ -179,7 +179,7 @@ def block3(dem_feat):
             title += f'No: {yes_no_counts.loc[v.no_ans]} ({yes_no_prop.loc[v.no_ans]} %) /<br>'
             title += f'Yes: {yes_no_counts.loc[v.yes_ans]} ({yes_no_prop.loc[v.yes_ans]} %)'
             fig_cancer = plots.pie(df_sub[df_sub[v.cancer_feat_type] != v.no_ans], v.cancer_feat_type, title, v.cancer_type_colors,
-                      v.cancer_type_order, return_fig=True)
+                      v.cancer_type_order, show_fig=False, return_fig=True)
             fig_cancer.update_layout(height=v.dash_plot_height, showlegend=False)
             st.plotly_chart(fig_cancer, use_container_width=True)
     else:

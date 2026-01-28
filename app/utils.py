@@ -148,7 +148,7 @@ def plot_pie(df, x, title=None, height=v.dash_plot_height, **kwargs):
     """
     if title is None:
         title = x
-    fig_dist = plots.pie(df, x, return_fig=True, title=title, **kwargs)
+    fig_dist = plots.pie(df, x, show_fig=False, return_fig=True, title=title, **kwargs)
     fig_dist.update_layout(height=height, showlegend=False)
     st.plotly_chart(fig_dist, use_container_width=True)
 
